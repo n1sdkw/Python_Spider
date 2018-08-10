@@ -1,0 +1,106 @@
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+import sys
+import requests
+import re
+import pymongo
+from pymongo import MongoClient
+
+from bs4 import BeautifulSoup
+
+def none():
+    print("Data is Null")
+
+def resuldt(title,href,id):
+    print(title,href,id)
+
+
+
+
+
+
+    ###########################################################
+
+url='http://www.cntour.cn/'#目标地址
+
+gethtml=requests.get(url) #request爬取目标地址
+
+sou=BeautifulSoup(gethtml.text,'lxml') #对爬取文本进行解码
+
+data=sou.select('#main > div > div.mtop.firstMod.clearfix > div.centerBox > ul.newsList > li > a') #正则，需要的数据
+
+##lastest > div > div.articles > article:nth-child(9)
+#main > div > div.mtop.firstMod.clearfix > div.centerBox > ul.newsList > li:nth-child(1) > a
+
+
+#########################循环打印
+if data!=0:#如果data不等于0则遍历结果
+    for item in data : #遍历所有内容
+        result ={
+            'title':item.get_text(),#title赋值
+            'href':item.get('href'),#href赋值
+            'id': re.findall('\d+',item.get('href'))[0]#id赋值取第一位
+        }
+
+        print(result)
+
+
+##########数据库################
+        conn = pymongo.MongoClient('localhost', 27017)#连接数据库
+        db = conn.testmode          #创建数据库
+        collection = db.demo_1       #创建表
+        save = collection.insert_one(result) #插入单条数据
+        conn.close()
+else:
+    none() #如果等于0则提示Null
