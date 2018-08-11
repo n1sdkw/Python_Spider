@@ -1,0 +1,53 @@
+F_TEXT=open('HTTPGET.txt',encoding='UTF-8')
+PAGE_GO=F_TEXT.readline()
+
+TAOBAO_URL="https://www.qiushibaike.com/hot"
+PAGE_ONE="/page/"
+TAOBAO_Serach_KEYWORD = 'https://www.qiushibaike.com/hot/page/2/'
+
+import requests
+import lxml
+from lxml import etree
+from fake_useragent import UserAgent
+import re
+import os
+import http.cookiejar
+from bs4 import BeautifulSoup
+def NUMBER():
+    PAGE_NUMBER = ""
+    print("请输入抓取深度")
+    PAGE_NUMBER = input()
+    return PAGE_NUMBER
+
+def PAGE():
+    NUMBER_INPUT=NUMBER()
+    print(NUMBER_INPUT)
+    PAGE_RESULT=""
+    for PAGE in range(int(NUMBER_INPUT)):
+        PAGE_RESULT=PAGE_ONE + str(PAGE + 1)
+        RESULT_ONE=TAOBAO_URL + PAGE_RESULT
+        print(RESULT_ONE)
+        f=open('HTTPGET.txt','a')
+        f.write(RESULT_ONE+'\n')
+        f.close()
+def REQUESTS_GET():
+        for i in F_TEXT:
+            print("当前读取连接" + i)
+            ua=UserAgent()
+            print("当前Uagent:"+ua.random)
+            headers={
+                'User-Agent':ua.random,
+            }
+
+            print(i)
+            GETHTML=requests.get(url=i,headers=headers,timeout=3)
+            print(GETHTML.text)
+            h=GETHTML.text
+            data=etree.HTML(h)
+            Selector=data.xpath('//*/a/div/span')
+            for exc in Selector:
+                print(exc.text)
+
+            
+REQUESTS_GET()
+
